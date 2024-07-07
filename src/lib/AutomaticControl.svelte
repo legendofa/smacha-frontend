@@ -27,13 +27,14 @@
         }
     };
 
-    const deleteTrip = (index) => {
+    const deleteTrip = (index: number) => {
         plannedTrips = plannedTrips.filter((_, i) => i !== index);
     }
 </script>
 
-<div style="display: flex">
-    <div style="display: overflow">
+<div style="display: grid; grid-auto-flow: column; grid-column-gap: 10px; padding: 15px">
+    <div>
+    <div style="display: grid; grid-auto-flow: row; grid-row-gap: 10px">
         Tripplanner:
         <div>
             <Textfield bind:value={tripEnergyUsageWh} label="Estimated Wh Trip" type="number" />
@@ -52,17 +53,14 @@
             </Fab>
         </div>
     </div>
-    <div>
+</div>
+    <div style="min-width: 200px">
         Planned trips:
         <List>
         {#each plannedTrips as plannedTrip, i}
         <Item>
             <Label>{plannedTrip.dateTime}</Label>
-            <Meta>
-                <Fab on:click={() => deleteTrip(i)}>
-                    <Icon class="material-icons">delete</Icon>
-                </Fab>
-            </Meta>
+            <Meta on:click={() => deleteTrip(i)} class="material-icons">delete</Meta>
         </Item>
         {/each}
     </List>
