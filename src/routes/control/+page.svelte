@@ -3,7 +3,6 @@
     import Card from '@smui/card';
     import FormField from '@smui/form-field';
     import Radio from '@smui/radio';
-    import LayoutGrid, { Cell } from '@smui/layout-grid';
     import AutomaticControl from "$lib/AutomaticControl.svelte";
     import OverwriteControl from "$lib/OverwriteControl.svelte";
     
