@@ -54,12 +54,12 @@
             </div>
         </div>
     </div>
-    <div style="min-width: 200px">
+    <div style="min-width: 280px">
         Planned trips:
         <List>
             {#each plannedTrips as plannedTrip, i}
             <Item>
-                <Label>{plannedTrip.dateTime}</Label>
+                <Label>{plannedTrip.dateTime}, {plannedTrip.energyUsageWh} Wh</Label>
                 <Meta on:click={() => deleteTrip(i)} class="material-icons">delete</Meta>
             </Item>
             {/each}
