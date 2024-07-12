@@ -11,7 +11,7 @@
     let temperature_data: { group: string, date: string, value: number }[] = [];
     let latest_temperature: { group: string, value: number }[] = [{group: 'Dataset 1', value: 0}];
 
-    onMount(async () => {
+    async function getData() {
         // Fetch humidity data
         const res_hum = await fetch(endpoint + "/get_humidity_data");
         let response_hum = await res_hum.json();
@@ -25,7 +25,7 @@
             };
         });
 
-        humidity_data = [...humidity_data,
+        humidity_data = [
             ...response_hum
         ];
         latest_humidity = [{group: 'Dataset 1', value: response_hum[response_hum.length - 1].value}];
@@ -43,10 +43,17 @@
             };
         });
 
-        temperature_data = [...temperature_data,
+        temperature_data = [
             ...response_temp
         ];
         latest_temperature = [{group: 'Dataset 1', value: response_temp[response_temp.length - 1].value}];
+    }
+
+    onMount(async () => {
+        while (true) {
+            await getData();
+            await new Promise(r => setTimeout(r, 5 * 1000)); // 5 seconds
+        }
     });
 </script>
 
