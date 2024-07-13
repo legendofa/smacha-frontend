@@ -4,6 +4,7 @@
     import { BarChartSimple, LineChart, GaugeChart, ScaleTypes, MeterChart, DonutChart } from '@carbon/charts-svelte'
     import Card from "@smui/card";
     import { onMount } from 'svelte';
+  import { tr } from "date-fns/locale";
 
     const endpoint = "http://localhost:5000";
     let humidity_data: { group: string, date: string, value: number }[] = [];
@@ -93,6 +94,7 @@
                 },
                 height: '400px',
                 zoomBar: {
+                    updateRangeAxis: true,
                     top: {
                         enabled: true
                     }
@@ -134,6 +136,7 @@
             },
             height: '400px',
             zoomBar: {
+                updateRangeAxis: true,
                 top: {
                     enabled: true
                 }
