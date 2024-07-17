@@ -4,14 +4,19 @@
     import { BarChartSimple, LineChart, GaugeChart, ScaleTypes, MeterChart, DonutChart } from '@carbon/charts-svelte'
     import Card from "@smui/card";
     import { onMount } from 'svelte';
-  import { tr } from "date-fns/locale";
+    import { tr } from "date-fns/locale";
 
     const endpoint = "http://localhost:5000";
     let humidity_data: { group: string, date: string, value: number }[] = [];
     let latest_humidity: { group: string, value: number }[] = [{group: 'Dataset 1', value: 0}];
     let temperature_data: { group: string, date: string, value: number }[] = [];
     let latest_temperature: { group: string, value: number }[] = [{group: 'Dataset 1', value: 0}];
+    let wall_plug_current_data: { group: string, date: string, value: number }[] = [];
+    let latest_wall_plug_current: { group: string, value: number }[] = [{group: 'Dataset 1', value: 0}];
+    let solar_panel_current_data: { group: string, date: string, value: number }[] = [];
+    let latest_solar_panel_current: { group: string, value: number }[] = [{group: 'Dataset 1', value: 0}];
 
+    // TODO: check if the timestamps are in correct order
     async function getData() {
         // Fetch humidity data
         const res_hum = await fetch(endpoint + "/get_humidity_data");
@@ -29,7 +34,9 @@
         humidity_data = [
             ...response_hum
         ];
-        latest_humidity = [{group: 'Dataset 1', value: response_hum[response_hum.length - 1].value}];
+        if (response_hum.length > 0) {
+            latest_humidity = [{group: 'Dataset 1', value: response_hum[response_hum.length - 1].value}]; //TODO: Last value is not always the latest
+        }
 
         // Fetch temperature data
         const res_temp = await fetch(endpoint + "/get_temperature_data");
@@ -47,7 +54,49 @@
         temperature_data = [
             ...response_temp
         ];
-        latest_temperature = [{group: 'Dataset 1', value: response_temp[response_temp.length - 1].value}];
+        if (response_temp.length > 0) {
+            latest_temperature = [{group: 'Dataset 1', value: response_temp[response_temp.length - 1].value}]; //TODO: Last value is not always the latest
+        }
+
+        // Fetch wall plug current data
+        const res_wall_plug_current = await fetch(endpoint + "/get_wall_plug_data");
+        let response_wall_plug_current = await res_wall_plug_current.json();
+        response_wall_plug_current = JSON.parse(response_wall_plug_current);
+
+        response_wall_plug_current = response_wall_plug_current.map((entry: {_id: any, current: number, timestamp: string}) => {
+            return {
+                group: 'Dataset 1',
+                date: entry.timestamp,
+                value: entry.current
+            };
+        });
+
+        wall_plug_current_data = [
+            ...response_wall_plug_current
+        ];
+        if (response_wall_plug_current.length > 0) {
+            latest_wall_plug_current = [{group: 'Dataset 1', value: response_wall_plug_current[response_wall_plug_current.length - 1].value}]; //TODO: Last value is not always the latest
+        }
+
+        // Fetch solar panel current data
+        const res_solar_panel_current = await fetch(endpoint + "/get_solar_panel_data");
+        let response_solar_panel_current = await res_solar_panel_current.json();
+        response_solar_panel_current = JSON.parse(response_solar_panel_current);
+
+        response_solar_panel_current = response_solar_panel_current.map((entry: {_id: any, current: number, timestamp: string}) => {
+            return {
+                group: 'Dataset 1',
+                date: entry.timestamp,
+                value: entry.current
+            };
+        });
+
+        solar_panel_current_data = [
+            ...response_solar_panel_current
+        ];
+        if (response_solar_panel_current.length > 0) {
+            latest_solar_panel_current = [{group: 'Dataset 1', value: response_solar_panel_current[response_solar_panel_current.length - 1].value}]; //TODO: Last value is not always the latest
+        }
     }
 
     onMount(async () => {
@@ -60,6 +109,7 @@
 
 <TopBar></TopBar>
 
+<!--TODO: Add option to enable and disable zoom bar-->
 <div class="card-container">
     <div class="card">
         <Card padded>
@@ -145,6 +195,91 @@
     </LineChart>
 </Card>
 </div>
+<div class="card">
+    <Card padded>
+        <MeterChart
+            data={latest_wall_plug_current}
+            options={
+                {
+                    title: 'Current wall plug current',
+                    meter: {
+                        peak: 40,
+                        showLabels: false,
+                    },
+                    height: '100px',
+                }
+            }>
+        </MeterChart>
+    <LineChart
+    data={wall_plug_current_data}
+    options={{
+            title: 'Current over time from wall plug',
+            axes: {
+                left: {
+                    mapsTo: 'value'
+                },
+                bottom: {
+                    scaleType: ScaleTypes.TIME,
+                    mapsTo: 'date'
+                }
+            },
+            legend: {
+                clickable: false
+            },
+            height: '400px',
+            zoomBar: {
+                updateRangeAxis: true,
+                top: {
+                    enabled: true
+                }
+            }
+    }}>
+    </LineChart>
+</Card>
+</div>
+<div class="card">
+    <Card padded>
+        <MeterChart
+            data={latest_solar_panel_current}
+            options={
+                {
+                    title: 'Current solar panel current',
+                    meter: {
+                        peak: 40,
+                        showLabels: false,
+                    },
+                    height: '100px',
+                }
+            }>
+        </MeterChart>
+    <LineChart
+    data={solar_panel_current_data}
+    options={{
+            title: 'Current over time from solar panel',
+            axes: {
+                left: {
+                    mapsTo: 'value'
+                },
+                bottom: {
+                    scaleType: ScaleTypes.TIME,
+                    mapsTo: 'date'
+                }
+            },
+            legend: {
+                clickable: false
+            },
+            height: '400px',
+            zoomBar: {
+                updateRangeAxis: true,
+                top: {
+                    enabled: true
+                }
+            }
+    }}>
+    </LineChart>
+</Card>
+</div>
+<!--
 <div class="card">
     <Card padded>
         <MeterChart
@@ -381,6 +516,7 @@
     </DonutChart>
 </Card>
 </div>
+-->
 </div>
 
 <style>

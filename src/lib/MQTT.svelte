@@ -1,10 +1,11 @@
+<!--
 <script>
     import mqtt from "mqtt";
     
     const protocol = 'mqtt'
     const host = 'raspberrypi.local'
     const port = '8080'
-    const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+    const clientId = `iot-frontend_${Math.random().toString(16).slice(3)}`
     
     const connectUrl = `${protocol}://${host}:${port}`
     
@@ -12,8 +13,8 @@
       clientId,
       clean: true,
       connectTimeout: 4000,
-      username: 'sciot-user',
-      password: '^7pKERzqawYhZtZh29d3',
+      //username: 'sciot-user',
+      //password: '^7pKERzqawYhZtZh29d3',
       reconnectPeriod: 1000,
     })
     
@@ -41,3 +42,4 @@
     })
     
     </script>
+-->
